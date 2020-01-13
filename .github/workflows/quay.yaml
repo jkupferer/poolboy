@@ -1,0 +1,26 @@
+---
+name: poolboy-publish-workflow
+on:
+  push:
+    branches: []
+    tags:
+    - v[0-9]*
+jobs:
+  build:
+    if: github.repository == 'jkupferer/poolboy'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+    - name: Publish My Image to Quay
+      uses: elgohr/Publish-Docker-Github-Action@2.11
+      with:
+        name: jkupferer/poolboy
+        username: ${{ secrets.QUAY_USERNAME }}
+        password: ${{ secrets.QUAY_PASSWORD }}
+        registry: quay.io
+        context: operator
+        dockerfile: operator/Dockerfile
+        tags: ${{ format('{0},latest', steps.get_version.outputs.VERSION) }}

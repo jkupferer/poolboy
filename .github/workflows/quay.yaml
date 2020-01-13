@@ -30,4 +30,4 @@ jobs:
         registry: quay.io
         context: operator
         dockerfile: operator/Dockerfile
-        tags: ${{ steps.get_version.outputs.VERSION }}
+        tags: ${{ steps.get_version.outputs.VERSION }},latest

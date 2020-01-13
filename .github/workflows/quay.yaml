@@ -15,9 +15,11 @@ jobs:
     - uses: actions/checkout@v2
     - name: Get the version
       id: get_version
-      run: echo '::set-output name=VERSION::${GITHUB_REF#refs/tags/}'
+      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
     - name: WTF
-      run: echo 'WTF ${GITHUB_REF}'
+      run: echo WTF ${GITHUB_REF}
+    - name: WTF2
+      run: echo WTF ${{ steps.get_version.outputs.VERSION }}
 
     #- name: Publish My Image to Quay
     #  uses: elgohr/Publish-Docker-Github-Action@master

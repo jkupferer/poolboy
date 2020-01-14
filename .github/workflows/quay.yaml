@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Show GITHUB_REF
+      run: echo ${GITHUB_REF}
     - name: Get the version
       id: get_version
       run: |
@@ -30,9 +32,7 @@ jobs:
         else
             echo "${GITHUB_REF:5}"
         fi
-    - name: WTF
-      run: echo WTF ${GITHUB_REF}
-    - name: WTF2
+    - name: Show IMAGE_TAGS
       run: echo WTF ${{ steps.get_version.outputs.IMAGE_TAGS }}
 
     #- name: Publish My Image to Quay

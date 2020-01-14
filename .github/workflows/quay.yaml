@@ -24,13 +24,14 @@ jobs:
         echo -n ::set-output name=IMAGE_TAGS::
         # Tags build from master as latest
         if [ "${GITHUB_REF}" == 'refs/master' ]; then
+        if [ "${GITHUB_REF}" == 'heads/master' ]; then
             echo latest
         # Match git tags to image tags
         elif [ "${GITHUB_REF:0:10}" == 'refs/tags/' ]; then
             echo "${GITHUB_REF:10}"
-        # Building off of another branch? best guess is use branch name
+        # Otherwise, best guess...
         else
-            echo "${GITHUB_REF:5}"
+            echo "${GITHUB_REF/*\//}"
         fi
     - name: Show IMAGE_TAGS
       run: echo WTF ${{ steps.get_version.outputs.IMAGE_TAGS }}

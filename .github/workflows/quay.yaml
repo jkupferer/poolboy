@@ -23,7 +23,6 @@ jobs:
       run: |
         echo -n ::set-output name=IMAGE_TAGS::
         # Tags build from master as latest
-        if [ "${GITHUB_REF}" == 'refs/master' ]; then
         if [ "${GITHUB_REF}" == 'heads/master' ]; then
             echo latest
         # Match git tags to image tags

@@ -23,12 +23,12 @@ jobs:
       run: |
         echo -n ::set-output name=IMAGE_TAGS::
         # Tags build from master as latest
-        if [ "${GITHUB_REF}" == 'heads/master' ]; then
+        if [ "${GITHUB_REF}" == 'refs/heads/master' ]; then
             echo latest
         # Match git tags to image tags
         elif [ "${GITHUB_REF:0:10}" == 'refs/tags/' ]; then
             echo "${GITHUB_REF:10}"
-        # Otherwise, best guess...
+        # Otherwise, best guess... branch name
         else
             echo "${GITHUB_REF/*\//}"
         fi

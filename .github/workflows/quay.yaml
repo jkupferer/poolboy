@@ -3,31 +3,46 @@
 name: poolboy-publish-workflow
 on:
   push:
-    branches-ignore:
-    - '*'
+    branches:
+    # Build latest off of master
+    - master
     tags:
-    - 'v[0-9]*'
+    # Version tag glob match, start 'v' then a number then whatever.
+    - v[0-9]*
 jobs:
   build:
+    # Prevent build failures on forks
     if: github.repository == 'jkupferer/poolboy'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Get the version
       id: get_version
-      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+      run: |
+        echo -n ::set-output name=IMAGE_TAGS::
+        # Tags build from master as latest
+        if [ "${GITHUB_REF}" == 'refs/master' ]; then
+            echo latest
+        # Match git tags to image tags
+        elif [ "${GITHUB_REF:0:10}" == 'refs/tags/' ]; then
+            echo "${GITHUB_REF:10}"
+        # Building off of another branch? best guess is use branch name
+        else
+            echo "${GITHUB_REF:5}"
+        fi
     - name: WTF
       run: echo WTF ${GITHUB_REF}
     - name: WTF2
-      run: echo WTF ${{ steps.get_version.outputs.VERSION }}
+      run: echo WTF ${{ steps.get_version.outputs.IMAGE_TAGS }}
 
-    - name: Publish My Image to Quay
-      uses: elgohr/Publish-Docker-Github-Action@master
-      with:
-        name: jkupferer/poolboy
-        username: ${{ secrets.QUAY_USERNAME }}
-        password: ${{ secrets.QUAY_PASSWORD }}
-        registry: quay.io
-        context: operator
-        dockerfile: operator/Dockerfile
-        tags: ${{ steps.get_version.outputs.VERSION }},latest
+    #- name: Publish My Image to Quay
+    #  uses: elgohr/Publish-Docker-Github-Action@master
+    #  with:
+    #    # This quay repository name matches github repository name
+    #    name: ${{ github.repository }}
+    #    username: ${{ secrets.QUAY_USERNAME }}
+    #    password: ${{ secrets.QUAY_PASSWORD }}
+    #    registry: quay.io
+    #    context: operator
+    #    dockerfile: operator/Dockerfile
+    #    tags: ${{ steps.get_version.outputs.IMAGE_TAGS }}
